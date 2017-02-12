@@ -66,10 +66,6 @@ public class ShakyServiceIT {
 	@Test
 	public void deployServiceAndClient() throws Throwable {
 
-
-		// now then, they're both available.
-		// The client should support ${client}/{retry,hystrix}/hi/{name}
-
 		String clientUrl = this.cloudFoundryService.urlForApplication("shaky-client");
 
 		String param = "World";
