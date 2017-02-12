@@ -26,10 +26,9 @@ public class RetryableGreetingClient implements GreetingClient {
 
 	@Autowired
 	public RetryableGreetingClient(RestTemplate restTemplate,
-	                               @Value("${greeting-service.domain:127.0.0.1}") String domain,
-	                               @Value("${greeting-service.port:8080}") int port) {
+	                               @Value("${greeting-service.uri}") String domain) {
 		this.restTemplate = restTemplate;
-		this.serviceUri = "http://" + domain + ":" + port + "/hi/{name}";
+		this.serviceUri = domain;
 	}
 
 	// <1>
@@ -46,7 +45,8 @@ public class RetryableGreetingClient implements GreetingClient {
 				+ time + "/" + now.toString());
 
 		ParameterizedTypeReference<Map<String, String>> ptr =
-				new ParameterizedTypeReference<Map<String, String>>() { };
+				new ParameterizedTypeReference<Map<String, String>>() {
+				};
 
 		return this.restTemplate
 				.exchange(this.serviceUri, HttpMethod.GET, null, ptr, name)

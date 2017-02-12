@@ -21,11 +21,11 @@ public class CircuitBreakerGreetingClient implements GreetingClient {
 	private final String serviceUri;
 
 	@Autowired
-	public CircuitBreakerGreetingClient(RestTemplate restTemplate,
-			@Value("${greeting-service.domain:127.0.0.1}") String domain,
-			@Value("${greeting-service.port:8080}") int port) {
+	public CircuitBreakerGreetingClient(
+			RestTemplate restTemplate,
+			@Value("${greeting-service.uri}") String uri) {
 		this.restTemplate = restTemplate;
-		this.serviceUri = "http://" + domain + ":" + port + "/hi/{name}";
+		this.serviceUri = uri;
 	}
 
 	@Override
