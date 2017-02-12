@@ -8,7 +8,7 @@
         <artifactId>dataflow</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
-    <name>integration/dataflow/shell</name>
+    <name>data-integration/dataflow/shell</name>
     <artifactId>shell</artifactId>
     <dependencies>
         <dependency>

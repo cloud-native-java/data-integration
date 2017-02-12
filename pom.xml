@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>integration</artifactId>
+    <artifactId>data-integration</artifactId>
     <packaging>pom</packaging>
     <parent>
         <groupId>cnj</groupId>
@@ -14,16 +14,10 @@
     </parent>
 
     <modules>
-        <module>activiti</module>
-        <module>activiti-integration</module>
-        <module>remote-partitioning</module>
-        <module>shaky-service-to-service-calls</module>
         <module>dataflow</module>
-        <module>stream</module>
-        <module>batch-and-integration</module>
-        <module>batch</module>
-        <module>task</module>
-        <module>integration-it</module>
+        <module>data-integration-it</module>
+        <module>shaky-service-to-service-calls</module>
+
     </modules>
     <build>
 

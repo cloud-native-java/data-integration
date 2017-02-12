@@ -8,7 +8,7 @@
         <artifactId>dataflow</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
-    <name>integration/dataflow/task-example</name>
+    <name>data-integration/dataflow/task-example</name>
     <artifactId>task-example</artifactId>
     <dependencies>
         <dependency>

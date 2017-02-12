@@ -10,7 +10,7 @@
         <artifactId>shaky-service-to-service-calls</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
-    <name>integration/shaky-service-to-service-calls/shaky-client</name>
+    <name>data-integration/shaky-service-to-service-calls/shaky-client</name>
     <artifactId>shaky-client</artifactId>
 
     <dependencies>

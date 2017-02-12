@@ -9,7 +9,7 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
     <packaging>jar</packaging>
-    <name>integration/dataflow/server-definitions</name>
+    <name>data-integration/dataflow/server-definitions</name>
     <artifactId>server-definitions</artifactId>
     <dependencies>
         <dependency>

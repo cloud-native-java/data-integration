@@ -5,10 +5,10 @@
 
     <parent>
         <groupId>cnj</groupId>
-        <artifactId>integration</artifactId>
+        <artifactId>data-integration</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
-    <name>integration/dataflow</name>
+    <name>data-integration/dataflow</name>
     <artifactId>dataflow</artifactId>
 
     <packaging>pom</packaging>
