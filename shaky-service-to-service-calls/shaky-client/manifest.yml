@@ -1,0 +1,10 @@
+---
+applications:
+- name: shaky-client
+  instances: 1
+  host: shaky-client-${random-word}
+  path: target/shaky-client.jar
+  services:
+    - shaky-service
+  env:
+    SPRING_PROFILES_ACTIVE: cloud
