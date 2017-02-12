@@ -20,7 +20,6 @@ import org.springframework.web.client.RestTemplate;
 import java.io.File;
 import java.util.stream.Stream;
 
-
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ShakyServiceIT.Config.class)
 public class ShakyServiceIT {
