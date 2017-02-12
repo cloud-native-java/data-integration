@@ -5,6 +5,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.cloudfoundry.operations.CloudFoundryOperations;
 import org.cloudfoundry.operations.applications.StopApplicationRequest;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.client.RestTemplate;
@@ -26,6 +28,12 @@ public class ShakyServiceIT {
 
 	@SpringBootApplication
 	public static class Config {
+
+		@Bean
+		RestTemplate restTemplate() {
+			return new RestTemplateBuilder()
+					.build();
+		}
 	}
 
 	@Autowired
@@ -36,14 +44,13 @@ public class ShakyServiceIT {
 	private final Log log = LogFactory.getLog(getClass());
 
 	@Autowired
-	private CloudFoundryService service;
-
-
-	private final RestTemplate restTemplate = new RestTemplateBuilder()
-			.build();
+	private CloudFoundryService cfs;
 
 	@Autowired
-	private CloudFoundryOperations cf;
+	private RestTemplate rt;
+
+	@Autowired
+	private CloudFoundryOperations cfo;
 
 	private void installApplications() throws Throwable {
 		File project = new File(".");
@@ -52,9 +59,9 @@ public class ShakyServiceIT {
 		Assert.assertTrue(this.shakyClient.exists());
 		Assert.assertTrue(this.shakyService.exists());
 
-		this.service.pushApplicationAndCreateUserDefinedServiceUsingManifest(
+		this.cfs.pushApplicationAndCreateUserDefinedServiceUsingManifest(
 				this.shakyService);
-		this.service.pushApplicationUsingManifest(this.shakyClient);
+		this.cfs.pushApplicationUsingManifest(this.shakyClient);
 	}
 
 	@Before
@@ -62,31 +69,40 @@ public class ShakyServiceIT {
 		this.installApplications();
 	}
 
+	@After
+	public void after() throws Throwable {
+		Stream.of(this.shakyClient, this.shakyService).forEach(file ->
+				this.cfs.applicationManifestFrom(file).forEach((jar, manifest) -> {
+					this.cfs.destroyApplicationIfExists(manifest.getName());
+				}));
+
+		this.cfs.applicationManifestFrom(this.shakyService).forEach((jar, manifest) -> {
+			this.cfs.destroyServiceIfExists(manifest.getName());
+		});
+		this.cfs.destroyOrphanedRoutes();
+	}
+
 	@Test
 	public void deployServiceAndClient() throws Throwable {
 
+		// the client has the recovery logic
 		String clientUrl = this.cloudFoundryService.urlForApplication("shaky-client");
-
 		String param = "World";
+		call(clientUrl, param, "Hello, " + param + "!");
+
+		// client recovery logic trips when the service is down
+		this.cfo.applications().stop(StopApplicationRequest.builder().name("shaky-service").build()).block();
+		call(clientUrl, param, "OHAI");
+	}
+
+	private void call(String clientUrl, String param, String expected) {
 		Stream.of("hystrix", "retry").forEach(type -> {
 			String fullUrl = clientUrl + "/" + type + "/hi/" + param;
-			this.log.info("full URL: " + fullUrl);
 			ResponseEntity<String> responseEntity =
-					this.restTemplate.getForEntity(fullUrl, String.class);
+					this.rt.getForEntity(fullUrl, String.class);
 			log.info("called " + fullUrl + " and received " + responseEntity.getBody());
-			Assert.assertEquals("Hello, " + param, responseEntity.getBody());
+			Assert.assertEquals(expected, responseEntity.getBody());
 		});
-
-		this.cf.applications().stop(StopApplicationRequest.builder().name("shaky-service").build()).block();
-
-		Stream.of("hystrix", "retry").forEach(type -> {
-			String fullUrl = clientUrl + "" + type + "/hi/World";
-			this.log.info("full URL: " + fullUrl);
-			ResponseEntity<String> responseEntity =
-					this.restTemplate.getForEntity(fullUrl, String.class);
-			log.info("called " + fullUrl + " and received " + responseEntity.getBody());
-			Assert.assertEquals("OHAI", responseEntity.getBody());
-		});
-
 	}
+
 }

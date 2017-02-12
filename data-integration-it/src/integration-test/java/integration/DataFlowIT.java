@@ -31,9 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-/**
- * @author <a href="mailto:josh@joshlong.com">Josh Long</a>
- */
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = DataFlowIT.Config.class)
 public class DataFlowIT {

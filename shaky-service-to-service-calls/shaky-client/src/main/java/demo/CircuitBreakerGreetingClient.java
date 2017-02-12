@@ -40,7 +40,7 @@ public class CircuitBreakerGreetingClient implements GreetingClient {
 		};
 
 		return this.restTemplate
-				.exchange(this.serviceUri, HttpMethod.GET, null, ptr, name)
+				.exchange(this.serviceUri + "/hi/" + name, HttpMethod.GET, null, ptr, name)
 				.getBody().get("greeting");
 	}
 
