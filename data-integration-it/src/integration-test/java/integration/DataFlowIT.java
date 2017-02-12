@@ -149,7 +149,7 @@ public class DataFlowIT {
 											.build())
 							.block();
 
-					log.info("set environment variable for " + appName + ": " + e.getKey() + '=' + e.getValue());
+					log.info("set environment variable for " + appName + ": " + e.getKey());
 				});
 
 		log.info("set all " + env.size() + " environment variables.");
