@@ -1,6 +1,7 @@
 package integration;
 
 import cnj.CloudFoundryService;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -38,11 +39,12 @@ public class ShakyServiceIT {
 		this.service.pushApplicationUsingManifest(
 				this.shakyClient);
 
+		// TODO now test that the end to end works!
 	}
 
 	@Test
 	public void deployServiceAndClient() throws Throwable {
-
+		Assert.assertTrue(true);
 	}
 
 
