@@ -70,7 +70,7 @@ public class ShakyServiceIT {
 
 		String param = "World";
 		Stream.of("hystrix", "retry").forEach(type -> {
-			String fullUrl = clientUrl + "" + type + "/hi/" + param;
+			String fullUrl = clientUrl + "/" + type + "/hi/" + param;
 			this.log.info("full URL: " + fullUrl);
 			ResponseEntity<String> responseEntity =
 					this.restTemplate.getForEntity(fullUrl, String.class);
