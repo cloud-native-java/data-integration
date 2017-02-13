@@ -11,6 +11,7 @@
     <name>data-integration/data-integration</name>
     <artifactId>data-integration-it</artifactId>
 
+    <!-- TEST -->
     <dependencies>
         <dependency>
             <groupId>cnj</groupId>
