@@ -11,7 +11,7 @@
     <name>data-integration/data-integration</name>
     <artifactId>data-integration-it</artifactId>
 
-    <!-- something's definitely weird here. -->
+
 
     <dependencies>
         <dependency>
