@@ -12,8 +12,7 @@ public class GreetingClientRestController {
 	private final CircuitBreakerGreetingClient cb;
 
 	@Autowired
-	GreetingClientRestController(
-			RetryableGreetingClient retry,
+	GreetingClientRestController(RetryableGreetingClient retry,
 			CircuitBreakerGreetingClient cb) {
 		this.retry = retry;
 		this.cb = cb;

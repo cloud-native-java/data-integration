@@ -16,13 +16,12 @@ import java.util.Map;
 @Component
 public class CircuitBreakerGreetingClient implements GreetingClient {
 
-	private Log log = LogFactory.getLog(getClass());
 	private final RestTemplate restTemplate;
 	private final String serviceUri;
+	private Log log = LogFactory.getLog(getClass());
 
 	@Autowired
-	public CircuitBreakerGreetingClient(
-			RestTemplate restTemplate,
+	public CircuitBreakerGreetingClient(RestTemplate restTemplate,
 			@Value("${greeting-service.uri}") String uri) {
 		this.restTemplate = restTemplate;
 		this.serviceUri = uri;
@@ -33,8 +32,8 @@ public class CircuitBreakerGreetingClient implements GreetingClient {
 	public String greet(String name) {
 		long time = System.currentTimeMillis();
 		Date now = new Date(time);
-		this.log.info("attempting to call " + "the greeting-service " + time
-				+ "/" + now.toString());
+		this.log.info("attempting to call " + "the greeting-service " + time + "/"
+				+ now.toString());
 
 		ParameterizedTypeReference<Map<String, String>> ptr = new ParameterizedTypeReference<Map<String, String>>() {
 		};

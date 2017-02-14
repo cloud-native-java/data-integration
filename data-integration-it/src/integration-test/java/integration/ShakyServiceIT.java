@@ -26,29 +26,15 @@ import java.util.stream.Stream;
 @SpringBootTest(classes = ShakyServiceIT.Config.class)
 public class ShakyServiceIT {
 
-	@SpringBootApplication
-	public static class Config {
-
-		@Bean
-		RestTemplate restTemplate() {
-			return new RestTemplateBuilder()
-					.build();
-		}
-	}
-
+	private final Log log = LogFactory.getLog(getClass());
 	@Autowired
 	private CloudFoundryService cloudFoundryService;
 
 	private File shakyClient, shakyService;
-
-	private final Log log = LogFactory.getLog(getClass());
-
 	@Autowired
 	private CloudFoundryService cfs;
-
 	@Autowired
 	private RestTemplate rt;
-
 	@Autowired
 	private CloudFoundryOperations cfo;
 
@@ -103,6 +89,16 @@ public class ShakyServiceIT {
 			log.info("called " + fullUrl + " and received " + responseEntity.getBody());
 			Assert.assertEquals(expected, responseEntity.getBody());
 		});
+	}
+
+	@SpringBootApplication
+	public static class Config {
+
+		@Bean
+		RestTemplate restTemplate() {
+			return new RestTemplateBuilder()
+					.build();
+		}
 	}
 
 }
