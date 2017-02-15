@@ -10,8 +10,6 @@
     </parent>
     <name>data-integration/data-integration</name>
     <artifactId>data-integration-it</artifactId>
-
-
     <dependencies>
         <dependency>
             <groupId>cnj</groupId>
