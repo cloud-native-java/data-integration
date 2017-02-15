@@ -33,24 +33,42 @@ public class GreetingServiceRestControllerTest {
 	private ObjectMapper objectMapper;
 
 	@Before
-	public void before() throws Exception {
-		this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
+	public void before()
+			throws Exception {
+		this.mockMvc = MockMvcBuilders
+				.webAppContextSetup(
+						this.webApplicationContext)
+				.build();
 	}
 
 	@Test
-	public void greetings() throws Exception {
+	public void greetings()
+			throws Exception {
 		String cnj = "CNJ";
 		this.mockMvc
-				.perform(get("/hi/" + cnj).contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isOk())
+				.perform(
+						get("/hi/" + cnj)
+								.contentType(
+										MediaType.APPLICATION_JSON))
+				.andExpect(
+						status().isOk())
 				.andExpect(
 						mvcResult -> {
-							String json = mvcResult.getResponse().getContentAsString();
+							String json = mvcResult
+									.getResponse()
+									.getContentAsString();
 							TypeReference<Map<String, String>> typeReference = new TypeReference<Map<String, String>>() {
 							};
-							Map<String, String> mapOfData = objectMapper.readerFor(typeReference)
-									.readValue(json.getBytes());
-							assertTrue(mapOfData.get("greeting").contains(cnj));
+							Map<String, String> mapOfData = objectMapper
+									.readerFor(
+											typeReference)
+									.readValue(
+											json.getBytes());
+							assertTrue(mapOfData
+									.get(
+											"greeting")
+									.contains(
+											cnj));
 						});
 	}
 }

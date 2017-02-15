@@ -9,22 +9,28 @@ import org.springframework.web.bind.annotation.RestController;
 public class GreetingClientRestController {
 
 	private final RetryableGreetingClient retry;
+
 	private final CircuitBreakerGreetingClient cb;
 
 	@Autowired
-	GreetingClientRestController(RetryableGreetingClient retry,
+	GreetingClientRestController(
+			RetryableGreetingClient retry,
 			CircuitBreakerGreetingClient cb) {
 		this.retry = retry;
 		this.cb = cb;
 	}
 
 	@GetMapping("/hystrix/hi/{name}")
-	String hystrix(@PathVariable String name) {
-		return this.cb.greet(name);
+	String hystrix(
+			@PathVariable String name) {
+		return this.cb
+				.greet(name);
 	}
 
 	@GetMapping("/retry/hi/{name}")
-	String retry(@PathVariable String name) {
-		return this.retry.greet(name);
+	String retry(
+			@PathVariable String name) {
+		return this.retry
+				.greet(name);
 	}
 }

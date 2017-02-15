@@ -71,12 +71,12 @@ public class ShakyServiceIT {
 	@Test
 	public void deployServiceAndClient() throws Throwable {
 
-		// the client has the recovery logic
+// the client has the recovery logic
 		String clientUrl = this.cloudFoundryService.urlForApplication("shaky-client");
 		String param = "World";
 		call(clientUrl, param, "Hello, " + param + "!");
 
-		// client recovery logic trips when the service is down
+// client recovery logic trips when the service is down
 		this.cfo.applications().stop(StopApplicationRequest.builder().name("shaky-service").build()).block();
 		call(clientUrl, param, "OHAI");
 	}

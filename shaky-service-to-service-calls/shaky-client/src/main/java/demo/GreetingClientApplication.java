@@ -14,8 +14,12 @@ import org.springframework.web.client.RestTemplate;
 @SpringBootApplication
 public class GreetingClientApplication {
 
-	public static void main(String args[]) {
-		SpringApplication.run(GreetingClientApplication.class, args);
+	public static void main(
+			String args[]) {
+		SpringApplication
+				.run(
+						GreetingClientApplication.class,
+						args);
 	}
 
 	@Bean
