@@ -37,9 +37,11 @@ import java.util.stream.StreamSupport;
 public class DataFlowIT {
 
  private Log log = LogFactory.getLog(getClass());
+
  @Autowired
  private CloudFoundryOperations cloudFoundryOperations;
  private File serviceDefinitionsManifest;
+
  @Autowired
  private CloudFoundryService cloudFoundryService;
  private String appName = "cfdf";

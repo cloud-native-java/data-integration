@@ -17,6 +17,7 @@
         <module>dataflow</module>
         <module>data-integration-it</module>
         <module>shaky-service-to-service-calls</module>
+        <module>axon</module>
 
     </modules>
     <build>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>cnj</groupId>
+        <artifactId>data-integration</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <name>data-integration/axon</name>
+
+    <artifactId>axon</artifactId>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>demo-complaints</module>
+        <module>demo-complaints-stats</module>
+    </modules>
+</project>
