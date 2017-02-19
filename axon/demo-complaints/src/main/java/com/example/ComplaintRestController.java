@@ -16,14 +16,13 @@ class ComplaintRestController {
 
  private final ComplaintQueryObjectRepository cqor;
 
- public ComplaintRestController(CommandGateway cg,
-  ComplaintQueryObjectRepository cqor) {
+ ComplaintRestController(CommandGateway cg, ComplaintQueryObjectRepository cqor) {
   this.cg = cg;
   this.cqor = cqor;
  }
 
  @PostMapping
- public CompletableFuture<String> fileComplaint(
+ CompletableFuture<String> fileComplaint(
   @RequestBody Map<String, String> request) {
   String id = UUID.randomUUID().toString();
   return cg.send(new FileComplaintCommand(id, request.get("company"), request
@@ -31,12 +30,12 @@ class ComplaintRestController {
  }
 
  @GetMapping
- public List<ComplaintQueryObject> findAll() {
+ List<ComplaintQueryObject> findAll() {
   return cqor.findAll();
  }
 
  @GetMapping("/{id}")
- public ComplaintQueryObject find(@PathVariable String id) {
+ ComplaintQueryObject find(@PathVariable String id) {
   return cqor.findOne(id);
  }
 }
