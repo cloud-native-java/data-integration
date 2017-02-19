@@ -1,6 +1,7 @@
 package com.example;
 
 import org.axonframework.commandhandling.gateway.CommandGateway;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,19 +17,27 @@ class ComplaintRestController {
 
  private final ComplaintQueryObjectRepository cqor;
 
+ @Autowired
  ComplaintRestController(CommandGateway cg, ComplaintQueryObjectRepository cqor) {
   this.cg = cg;
   this.cqor = cqor;
  }
 
+ // <1>
  @PostMapping
  CompletableFuture<String> fileComplaint(
   @RequestBody Map<String, String> request) {
+
   String id = UUID.randomUUID().toString();
-  return cg.send(new FileComplaintCommand(id, request.get("company"), request
-   .get("description")));
+
+  FileComplaintCommand command = new FileComplaintCommand(id,
+   request.get("company"), request.get("description"));
+
+  return cg.send(command);
+
  }
 
+ // <2>
  @GetMapping
  List<ComplaintQueryObject> findAll() {
   return cqor.findAll();

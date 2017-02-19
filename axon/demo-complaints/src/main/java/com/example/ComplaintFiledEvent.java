@@ -6,7 +6,10 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class ComplaintFiledEvent {
-private final String id;
-private final String company;
-private final String description;
+
+ private final String id;
+
+ private final String company;
+
+ private final String description;
 }
