@@ -24,51 +24,51 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = GreetingApplication.class, webEnvironment = MOCK)
 public class GreetingServiceRestControllerTest {
 
-	private MockMvc mockMvc;
+ private MockMvc mockMvc;
 
-	@Autowired
-	private WebApplicationContext webApplicationContext;
+ @Autowired
+ private WebApplicationContext webApplicationContext;
 
-	@Autowired
-	private ObjectMapper objectMapper;
+ @Autowired
+ private ObjectMapper objectMapper;
 
-	@Before
-	public void before()
-			throws Exception {
-		this.mockMvc = MockMvcBuilders
-				.webAppContextSetup(
-						this.webApplicationContext)
-				.build();
-	}
+ @Before
+ public void before()
+   throws Exception {
+  this.mockMvc = MockMvcBuilders
+    .webAppContextSetup(
+      this.webApplicationContext)
+    .build();
+ }
 
-	@Test
-	public void greetings()
-			throws Exception {
-		String cnj = "CNJ";
-		this.mockMvc
-				.perform(
-						get("/hi/" + cnj)
-								.contentType(
-										MediaType.APPLICATION_JSON))
-				.andExpect(
-						status().isOk())
-				.andExpect(
-						mvcResult -> {
-							String json = mvcResult
-									.getResponse()
-									.getContentAsString();
-							TypeReference<Map<String, String>> typeReference = new TypeReference<Map<String, String>>() {
-							};
-							Map<String, String> mapOfData = objectMapper
-									.readerFor(
-											typeReference)
-									.readValue(
-											json.getBytes());
-							assertTrue(mapOfData
-									.get(
-											"greeting")
-									.contains(
-											cnj));
-						});
-	}
+ @Test
+ public void greetings()
+   throws Exception {
+  String cnj = "CNJ";
+  this.mockMvc
+    .perform(
+      get("/hi/" + cnj)
+        .contentType(
+          MediaType.APPLICATION_JSON))
+    .andExpect(
+      status().isOk())
+    .andExpect(
+      mvcResult -> {
+       String json = mvcResult
+         .getResponse()
+         .getContentAsString();
+       TypeReference<Map<String, String>> typeReference = new TypeReference<Map<String, String>>() {
+       };
+       Map<String, String> mapOfData = objectMapper
+         .readerFor(
+           typeReference)
+         .readValue(
+           json.getBytes());
+       assertTrue(mapOfData
+         .get(
+           "greeting")
+         .contains(
+           cnj));
+      });
+ }
 }

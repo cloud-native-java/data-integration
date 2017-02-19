@@ -10,8 +10,8 @@ import stream.ProcessorStreamExample;
 @SpringBootTest(classes = ProcessorStreamExample.class)
 public class Stream101ApplicationTests {
 
-	@Test
-	public void contextLoads() {
-	}
+ @Test
+ public void contextLoads() {
+ }
 
 }

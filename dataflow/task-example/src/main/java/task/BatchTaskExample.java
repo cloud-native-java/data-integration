@@ -19,40 +19,40 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 public class BatchTaskExample {
 
-	private Log log = LogFactory
-			.getLog(getClass());
+ private Log log = LogFactory
+   .getLog(getClass());
 
-	public static void main(
-			String[] args) {
-		SpringApplication
-				.run(
-						BatchTaskExample.class,
-						args);
-	}
+ public static void main(
+   String[] args) {
+  SpringApplication
+    .run(
+      BatchTaskExample.class,
+      args);
+ }
 
-	@Bean
-	Step tasklet(
-			StepBuilderFactory sbf,
-			BatchTaskProperties btp) {
-		return sbf
-				.get("tasklet")
-				.tasklet(
-						(contribution,
-								chunkContext) -> {
-							log.info("input = "
-									+ btp
-											.getInput());
-							return RepeatStatus.FINISHED;
-						}).build();
-	}
+ @Bean
+ Step tasklet(
+   StepBuilderFactory sbf,
+   BatchTaskProperties btp) {
+  return sbf
+    .get("tasklet")
+    .tasklet(
+      (contribution,
+        chunkContext) -> {
+       log.info("input = "
+         + btp
+           .getInput());
+       return RepeatStatus.FINISHED;
+      }).build();
+ }
 
-	@Bean
-	Job hello(
-			JobBuilderFactory jbf) {
-		Step step = this.tasklet(
-				null, null);
-		return jbf
-				.get("batch-task")
-				.start(step).build();
-	}
+ @Bean
+ Job hello(
+   JobBuilderFactory jbf) {
+  Step step = this.tasklet(
+    null, null);
+  return jbf
+    .get("batch-task")
+    .start(step).build();
+ }
 }

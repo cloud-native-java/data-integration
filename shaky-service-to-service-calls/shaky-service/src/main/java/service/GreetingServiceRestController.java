@@ -11,13 +11,13 @@ import java.util.Map;
 @RestController
 public class GreetingServiceRestController {
 
-	@RequestMapping(method = RequestMethod.GET, value = "/hi/{name}")
-	Map<String, String> greetings(
-			@PathVariable String name) {
-		return Collections
-				.singletonMap(
-						"greeting",
-						"Hello, " + name
-								+ "!");
-	}
+ @RequestMapping(method = RequestMethod.GET, value = "/hi/{name}")
+ Map<String, String> greetings(
+   @PathVariable String name) {
+  return Collections
+    .singletonMap(
+      "greeting",
+      "Hello, " + name
+        + "!");
+ }
 }

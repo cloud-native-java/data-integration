@@ -8,15 +8,15 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "simple-batch-task")
 public class BatchTaskProperties {
 
-	private Resource input,
-			output;
+ private Resource input,
+   output;
 
-	public Resource getInput() {
-		return input;
-	}
+ public Resource getInput() {
+  return input;
+ }
 
-	public void setInput(
-			Resource input) {
-		this.input = input;
-	}
+ public void setInput(
+   Resource input) {
+  this.input = input;
+ }
 }
