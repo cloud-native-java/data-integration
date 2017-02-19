@@ -14,8 +14,26 @@
     <artifactId>axon</artifactId>
     <packaging>pom</packaging>
 
+    <properties>
+        <axon.version>3.0.2</axon.version>
+    </properties>
+
     <modules>
         <module>demo-complaints</module>
         <module>demo-complaints-stats</module>
     </modules>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.axonframework</groupId>
+                <artifactId>axon-spring-boot-starter</artifactId>
+                <version>${axon.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.axonframework</groupId>
+                <artifactId>axon-amqp</artifactId>
+                <version>${axon.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>

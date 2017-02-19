@@ -13,9 +13,6 @@
 
     <artifactId>demo-complaints</artifactId>
 
-    <properties>
-        <axon.version>3.0.2</axon.version>
-    </properties>
 
     <dependencies>
         <dependency>
@@ -33,13 +30,11 @@
         <dependency>
             <groupId>org.axonframework</groupId>
             <artifactId>axon-spring-boot-starter</artifactId>
-            <version>${axon.version}</version>
-        </dependency>
+         </dependency>
         <dependency>
             <groupId>org.axonframework</groupId>
             <artifactId>axon-amqp</artifactId>
-            <version>${axon.version}</version>
-        </dependency>
+         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>

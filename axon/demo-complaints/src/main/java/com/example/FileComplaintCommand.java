@@ -4,19 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-
-@Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ComplaintQueryObject {
+class FileComplaintCommand {
 
- @Id
- private String complaintId;
+ private String id;
 
  private String company;
 
  private String description;
+
 }

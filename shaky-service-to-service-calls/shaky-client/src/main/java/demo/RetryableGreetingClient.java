@@ -16,20 +16,17 @@ import java.util.Date;
 import java.util.Map;
 
 @Component
-public class RetryableGreetingClient
-  implements GreetingClient {
+public class RetryableGreetingClient implements GreetingClient {
 
  private final RestTemplate restTemplate;
 
  private final String serviceUri;
 
- private Log log = LogFactory
-   .getLog(getClass());
+ private Log log = LogFactory.getLog(getClass());
 
  @Autowired
- public RetryableGreetingClient(
-   RestTemplate restTemplate,
-   @Value("${greeting-service.uri}") String domain) {
+ public RetryableGreetingClient(RestTemplate restTemplate,
+  @Value("${greeting-service.uri}") String domain) {
   this.restTemplate = restTemplate;
   this.serviceUri = domain;
  }
@@ -37,37 +34,25 @@ public class RetryableGreetingClient
  // <1>
  @Retryable(include = Exception.class, maxAttempts = 4, backoff = @Backoff(multiplier = 5))
  @Override
- public String greet(
-   String name) {
-  long time = System
-    .currentTimeMillis();
+ public String greet(String name) {
+  long time = System.currentTimeMillis();
 
   Date now = new Date(time);
 
-  this.log
-    .info("attempting to call the greeting-service "
-      + time
-      + "/"
-      + now.toString());
+  this.log.info("attempting to call the greeting-service " + time + "/"
+   + now.toString());
 
   ParameterizedTypeReference<Map<String, String>> ptr = new ParameterizedTypeReference<Map<String, String>>() {
   };
 
   return this.restTemplate
-    .exchange(
-      this.serviceUri
-        + "/hi/"
-        + name,
-      HttpMethod.GET,
-      null, ptr, name)
-    .getBody()
-    .get("greeting");
+   .exchange(this.serviceUri + "/hi/" + name, HttpMethod.GET, null, ptr, name)
+   .getBody().get("greeting");
  }
 
  // <2>
  @Recover
- public String recoverForGreeting(
-   Exception e) {
+ public String recoverForGreeting(Exception e) {
   return "OHAI";
  }
 
