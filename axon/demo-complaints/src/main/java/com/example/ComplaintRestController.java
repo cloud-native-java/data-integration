@@ -34,6 +34,18 @@ class ComplaintRestController {
    request.get("company"), request.get("description"));
 
   return cg.send(command);
+ }
+
+ @PutMapping
+ CompletableFuture<String> updateComplaint(
+  @RequestBody Map<String, String> request) {
+
+  String id = UUID.randomUUID().toString();
+
+  ChangeComplaintCommand command = new ChangeComplaintCommand(id,
+      request.get("company"), request.get("description"));
+
+  return cg.send(command);
 
  }
 
