@@ -6,15 +6,15 @@ import org.springframework.stereotype.Component;
 @Component
 class ComplaintQueryObjectUpdater {
 
- private final ComplaintQueryObjectRepository complaintsQueryObjectRepository;
+ private final ComplaintQueryObjectRepository cqor;
 
  public ComplaintQueryObjectUpdater(ComplaintQueryObjectRepository cqor) {
-  this.complaintsQueryObjectRepository = cqor;
+  this.cqor = cqor;
  }
 
  @EventHandler
  public void on(ComplaintFiledEvent event) {
-  complaintsQueryObjectRepository.save(new ComplaintQueryObject(event.getId(),
+  cqor.save(new ComplaintQueryObject(event.getId(),
    event.getCompany(), event.getDescription()));
  }
 }
