@@ -9,16 +9,11 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 @RestController
-@RequestMapping(value = "/complaints",
-		consumes = MediaType.APPLICATION_JSON_VALUE,
-		produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/complaints", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 class ComplaintsRestController {
 
 	private final CommandGateway cg;
@@ -29,52 +24,55 @@ class ComplaintsRestController {
 	}
 
 	@PostMapping
-	CompletableFuture<ResponseEntity<?>> createComplaint(@RequestBody Map<String, String> body) {
+	CompletableFuture<ResponseEntity<?>> createComplaint(
+			@RequestBody Map<String, String> body) {
 
-		FileComplaintCommand complaint = new FileComplaintCommand(
-				UUID.randomUUID().toString(), body.get("company"), body.get("description"));
+		String id = UUID.randomUUID().toString();
+		FileComplaintCommand complaint = new FileComplaintCommand(id,
+				body.get("company"), body.get("description"));
 
-		return this.cg.send(complaint).thenApply(complaintId -> {
-			UriComponents uriComponents = UriComponentsBuilder
-					.newInstance()
-					.path("/complaints/{id}")
-					.build()
-					.expand(Collections.singletonMap("id", complaint.getId()));
-			URI uri = uriComponents.toUri();
-			return ResponseEntity.created(uri).build();
-		});
-
+		return this.cg.send(complaint).thenApply(
+				complaintId -> {
+					URI uri = uri("/complaints/{id}",
+							Collections.singletonMap("id", complaint.getId()));
+					return ResponseEntity.created(uri).build();
+				});
 	}
 
-
 	@DeleteMapping("/{complaintId}")
-	void close(@PathVariable String complaintId) {
-		CloseComplaintCommand closeComplaintCommand = new CloseComplaintCommand(complaintId);
-		this.cg.send(closeComplaintCommand);
+	CompletableFuture<ResponseEntity<?>> closeComplaint(
+			@PathVariable String complaintId) {
+		CloseComplaintCommand closeComplaintCommand = new CloseComplaintCommand(
+				complaintId);
+		return this.cg.send(closeComplaintCommand)
+				.thenApply(none -> ResponseEntity.notFound().build());
 	}
 
 	@PostMapping("/{complaintId}/comments")
-	ResponseEntity<?> createComplaintComment(
-			@PathVariable String complaintId,
-			@RequestBody Map<String, Object> body) {
+	CompletableFuture<ResponseEntity<?>> createComment(
+			@PathVariable String complaintId, @RequestBody Map<String, Object> body) {
 
 		Long when = Long.class.cast(body.getOrDefault("when", new Date().getTime()));
 
-		AddCommentCommand command = new AddCommentCommand(
-				complaintId,
-				UUID.randomUUID().toString(),
-				String.class.cast(body.get("comment")),
-				String.class.cast(body.get("user")),
-				new Date(when));
+		AddCommentCommand command = new AddCommentCommand(complaintId, UUID
+				.randomUUID().toString(), String.class.cast(body.get("comment")),
+				String.class.cast(body.get("user")), new Date(when));
 
-		this.cg.send(command);
+		return this.cg.send(command).thenApply(commentId -> {
 
-		UriComponents uriComponents = UriComponentsBuilder
-				.newInstance()
-				.path("/complaints/{complaintId}/comments/{commentId}")
-				.build()
-				.expand(complaintId, command.getCommentId());
-		URI uri = uriComponents.toUri();
-		return ResponseEntity.created(uri).build();
+			Map<String, String> parms = new HashMap<>();
+			parms.put("complaintId", complaintId);
+			parms.put("commentId", command.getCommentId());
+
+			URI uri = uri("/complaints/{complaintId}/comments/{commentId}", parms);
+
+			return ResponseEntity.created(uri).build();
+		});
+	}
+
+	private static URI uri(String uri, Map<String, String> template) {
+		UriComponents uriComponents = UriComponentsBuilder.newInstance().path(uri)
+				.build().expand(template);
+		return uriComponents.toUri();
 	}
 }

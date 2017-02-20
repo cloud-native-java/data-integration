@@ -9,17 +9,18 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString (exclude = "complaint")
-@EqualsAndHashCode (exclude = "complaint")
+@ToString(exclude = "complaint")
+@EqualsAndHashCode(exclude = "complaint")
 public class CommentQueryObject {
 
-	@ManyToOne(fetch= FetchType.LAZY)
-	@JoinColumn(name="COMPLAINT_ID")
-	private ComplaintQueryObject complaint;
+ @ManyToOne(fetch = FetchType.LAZY)
+ @JoinColumn(name = "COMPLAINT_ID")
+ private ComplaintQueryObject complaint;
 
-	@Id
-	private String id;
-	private String comment, user;
+ @Id
+ private String id;
 
-	private Date when;
+ private String comment, user;
+
+ private Date when;
 }

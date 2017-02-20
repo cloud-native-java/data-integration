@@ -16,14 +16,16 @@ import java.util.Set;
 @NoArgsConstructor
 public class ComplaintQueryObject {
 
-	@Id
-	private String id;
+ @Id
+ private String id;
 
-	private String complaint;
-	private String company;
+ private String complaint;
 
-	@OneToMany(mappedBy="complaint")
-	private Set<CommentQueryObject> comments = new HashSet<>();
-	private boolean closed ;
+ private String company;
+
+ @OneToMany(mappedBy = "complaint")
+ private Set<CommentQueryObject> comments = new HashSet<>();
+
+ private boolean closed;
 
 }

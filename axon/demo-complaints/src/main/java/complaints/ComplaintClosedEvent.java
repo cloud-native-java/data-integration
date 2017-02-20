@@ -7,6 +7,6 @@ import lombok.Data;
 @AllArgsConstructor
 public class ComplaintClosedEvent {
 
-	private String complaintId;
+ private String complaintId;
 
 }

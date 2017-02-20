@@ -12,9 +12,10 @@ import java.util.Date;
 @AllArgsConstructor
 public class AddCommentCommand {
 
-	@TargetAggregateIdentifier
-	private String complaintId;
+ @TargetAggregateIdentifier
+ private String complaintId;
 
-	private String commentId, comment, user;
-	private Date when;
+ private String commentId, comment, user;
+
+ private Date when;
 }

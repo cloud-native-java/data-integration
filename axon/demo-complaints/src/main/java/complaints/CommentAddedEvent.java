@@ -8,6 +8,8 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 public class CommentAddedEvent {
-	private String complaintId,  commentId, comment, user;
-	private Date when;
+
+ private String complaintId, commentId, comment, user;
+
+ private Date when;
 }

@@ -1,6 +1,5 @@
 package complaints;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -8,9 +7,9 @@ import lombok.Data;
 @AllArgsConstructor
 public class ComplaintFiledEvent {
 
-	private final String id;
+ private final String id;
 
-	private final String company;
+ private final String company;
 
-	private final String complaint;
+ private final String complaint;
 }

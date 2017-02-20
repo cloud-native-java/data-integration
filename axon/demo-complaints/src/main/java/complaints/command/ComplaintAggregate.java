@@ -11,68 +11,89 @@ import org.springframework.util.Assert;
 
 import static org.axonframework.commandhandling.model.AggregateLifecycle.apply;
 
-
 /***
  *
- * i could use @Component.
- * Aggregate lets me `apply`. First apply invokes the event sourcing handler `on(CFE)`.
+ * we could use @Component. but an
+ * Aggregate lets us `apply` which first
+ * invokes an event sourcing handler. in
+ * this case the event sourcing handler
+ * is an ideal place to put any state
+ * between objects in the aggregate
+ * hierarchy (like whether the parent
+ * complaint is closed or not).
  *
+ * when a command is sent on the
+ * commandGateway, its
+ * targetAggregateIdentifier is used to
+ * route the command to the right
+ * command handler methods on an
+ * aggregate. when those handlers are
+ * involved, they publish events which
+ * are then handled by
+ * EventSourcingHandlers on the same
+ * aggregate. The EventSourcingHandlers
+ * then restore any state it has gleemed
+ * from the event (for example, is the
+ * complaint closed or not).
  */
 
 @Aggregate
 public class ComplaintAggregate {
 
-	private Log log = LogFactory.getLog(getClass());
+ private Log log = LogFactory.getLog(getClass());
 
-	@AggregateIdentifier
-	private String complaintId;
+ @AggregateIdentifier
+ private String complaintId;
 
-	private boolean closed;
+ private boolean closed;
 
-	public ComplaintAggregate(){}
+ // this is required because Spring
+ // manufactures the aggregage for Axon,
+ // and of course
+ // now Spring tries to satisfy
+ // parameters in the constructor that
+ // have no arguments.
+ public ComplaintAggregate() {
+ }
 
+ @CommandHandler
+ public ComplaintAggregate(FileComplaintCommand c) {
+  Assert.hasLength(c.getCompany());
+  Assert.hasLength(c.getDescription());
+  apply(new ComplaintFiledEvent(c.getId(), c.getCompany(), c.getDescription()));
+ }
 
-	@CommandHandler
-	public ComplaintAggregate(FileComplaintCommand complaint) {
-		Assert.hasLength(complaint.getCompany());
-		Assert.hasLength(complaint.getDescription());
-		apply(new ComplaintFiledEvent(complaint.getId(),
-				complaint.getCompany(), complaint.getDescription()));
-	}
+ @CommandHandler
+ public void resolveComplaint(CloseComplaintCommand ccc) {
+  if (notClosed()) {
+   apply(new ComplaintClosedEvent(this.complaintId));
+  }
+ }
 
-	@CommandHandler
-	public void resolveComplaint(CloseComplaintCommand ccc) {
-		if (notClosed()) {
-			apply(new ComplaintClosedEvent(this.complaintId));
-		}
-	}
+ @CommandHandler
+ public void addComment(AddCommentCommand c) {
+  Assert.hasLength(c.getComment());
+  Assert.hasLength(c.getCommentId());
+  Assert.hasLength(c.getComplaintId());
+  Assert.hasLength(c.getUser());
+  Assert.notNull(c.getWhen());
+  Assert.isTrue(notClosed());
+  apply(new CommentAddedEvent(c.getComplaintId(), c.getCommentId(),
+   c.getComment(), c.getUser(), c.getWhen()));
+ }
 
-	private boolean notClosed() {
-		return !this.closed;
-	}
+ @EventSourcingHandler
+ public void on(ComplaintClosedEvent cce) {
+  this.closed = true;
+ }
 
-	@CommandHandler
-	public void addComment(AddCommentCommand comment) {
-		log.info("adding comment " + comment.toString());
-		Assert.hasLength(comment.getComment());
-		Assert.hasLength(comment.getCommentId());
-		Assert.hasLength(comment.getComplaintId());
-		Assert.hasLength(comment.getUser());
-		Assert.notNull(comment.getWhen());
-		Assert.isTrue(notClosed());
-		apply(new CommentAddedEvent(comment.getComplaintId(),
-				comment.getCommentId(), comment.getComment(),
-				comment.getUser(), comment.getWhen()));
-	}
+ @EventSourcingHandler
+ protected void on(ComplaintFiledEvent cfe) {
+  this.complaintId = cfe.getId();
+  this.closed = false;
+ }
 
-	@EventSourcingHandler
-	public void on(ComplaintClosedEvent cce) {
-		this.closed = true;
-	}
-
-	@EventSourcingHandler
-	protected void on(ComplaintFiledEvent cfe) {
-		this.complaintId = cfe.getId();
-		this.closed = false;
-	}
+ private boolean notClosed() {
+  return !this.closed;
+ }
 }

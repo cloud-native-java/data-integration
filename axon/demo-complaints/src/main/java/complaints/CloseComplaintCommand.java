@@ -10,6 +10,6 @@ import org.axonframework.commandhandling.TargetAggregateIdentifier;
 @NoArgsConstructor
 public class CloseComplaintCommand {
 
-	@TargetAggregateIdentifier
-	private String complaintId;
+ @TargetAggregateIdentifier
+ private String complaintId;
 }
