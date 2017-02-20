@@ -7,7 +7,7 @@ import org.axonframework.spring.stereotype.Aggregate;
 import org.springframework.util.Assert;
 
 import static org.axonframework.commandhandling.model.AggregateLifecycle.apply;
-
+@Deprecated
 @Aggregate
 public class Complaint {
 

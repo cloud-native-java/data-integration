@@ -2,7 +2,7 @@ package com.example;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-
+@Deprecated
 @Data
 @AllArgsConstructor
 public class ComplaintFiledEvent {

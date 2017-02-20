@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-@Entity
+@Entity @Deprecated
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,4 +19,6 @@ public class ComplaintQueryObject {
  private String company;
 
  private String description;
+
+
 }
