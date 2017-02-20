@@ -26,7 +26,7 @@ public class DemoApplication {
 	}
 
 
-//	@Bean
+	//	@Bean
 	CommandLineRunner demo(
 			PlatformTransactionManager transactionManager,
 			ComplaintQueryObjectRepository complaintQueryObjectRepository,
@@ -38,7 +38,7 @@ public class DemoApplication {
 			TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
 
 			ComplaintQueryObject result = transactionTemplate.execute(tx -> {
-				ComplaintQueryObject complaint = new ComplaintQueryObject(id(), "WebLogic? why", "oracle", new HashSet<>());
+				ComplaintQueryObject complaint = new ComplaintQueryObject(id(), "WebLogic? why", "oracle", new HashSet<>(), false);
 				CommentQueryObject comment2 = new CommentQueryObject(
 						complaint, id(), "Please. Remove this from the world.", "rj", new Date());
 				CommentQueryObject comment1 = new CommentQueryObject(

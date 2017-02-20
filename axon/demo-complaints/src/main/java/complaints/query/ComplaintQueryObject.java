@@ -24,4 +24,6 @@ public class ComplaintQueryObject {
 
 	@OneToMany(mappedBy="complaint")
 	private Set<CommentQueryObject> comments = new HashSet<>();
+	private boolean closed ;
+
 }

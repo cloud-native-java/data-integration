@@ -1,4 +1,4 @@
-package com.example;
+package complaints;
 
 import org.axonframework.config.ProcessingGroup;
 import org.axonframework.eventhandling.EventHandler;

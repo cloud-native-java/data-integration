@@ -1,8 +1,8 @@
-package com.example;
+package complaints;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-@Deprecated
+
 @Data
 @AllArgsConstructor
 public class ComplaintFiledEvent {
@@ -11,5 +11,5 @@ public class ComplaintFiledEvent {
 
  private final String company;
 
- private final String description;
+ private final String complaint;
 }

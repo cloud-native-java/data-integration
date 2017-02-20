@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Date;
@@ -20,8 +21,8 @@ import java.util.Map;
 import java.util.UUID;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.MOCK;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
@@ -58,26 +59,28 @@ public class DemoApplicationTest {
 		this.commentJson = this.objectMapper.writeValueAsString(map);
 	}
 
-
 	private void createComplaint() throws Throwable {
 		this.log.debug("complaintJson: " + this.complaintJson);
-		this.mockMvc.perform(MockMvcRequestBuilders
+
+
+		MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders
 				.post("/complaints")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(this.complaintJson))
+				.andExpect(request().asyncStarted())
+				.andReturn();
+
+		this.mockMvc.perform(asyncDispatch(result))
 				.andExpect(header().stringValues("Location", "/complaints/" + this.complaintId))
 				.andExpect(status().isCreated());
-	}
-
-	@Test
-	public void complaint() throws Throwable {
-		this.createComplaint();
 	}
 
 	@Test
 	public void comment() throws Throwable {
 
 		this.log.debug("commentJson: " + this.commentJson);
+
+		this.createComplaint();
 
 		this.mockMvc.perform(MockMvcRequestBuilders
 				.post("/complaints/" + this.complaintId + "/comments")

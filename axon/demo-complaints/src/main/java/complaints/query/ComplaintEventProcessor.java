@@ -1,9 +1,8 @@
-package complaints;
+package complaints.query;
 
-import complaints.query.CommentQueryObject;
-import complaints.query.CommentQueryObjectRepository;
-import complaints.query.ComplaintQueryObject;
-import complaints.query.ComplaintQueryObjectRepository;
+import complaints.CommentAddedEvent;
+import complaints.ComplaintClosedEvent;
+import complaints.ComplaintFiledEvent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.axonframework.eventhandling.EventHandler;
@@ -38,9 +37,16 @@ public class ComplaintEventProcessor {
 	}
 
 	@EventHandler
+	public void on (ComplaintClosedEvent cce) {
+		ComplaintQueryObject complaintQueryObject = this.complaints.findOne(cce.getComplaintId());
+		complaintQueryObject.setClosed(true);
+		this.complaints.save(complaintQueryObject);
+	}
+
+	@EventHandler
 	public void on(ComplaintFiledEvent cfe) {
 		ComplaintQueryObject complaint = new ComplaintQueryObject(cfe.getId(), cfe.getComplaint(),
-				cfe.getCompany(), Collections.emptySet());
+				cfe.getCompany(), Collections.emptySet() , false);
 		this.complaints.save(complaint);
 		this.log.info("created complaint " + complaint);
 	}

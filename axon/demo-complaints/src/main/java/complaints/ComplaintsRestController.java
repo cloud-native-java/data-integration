@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping(value = "/complaints",
@@ -28,22 +29,28 @@ class ComplaintsRestController {
 	}
 
 	@PostMapping
-	ResponseEntity<?> createComplaint(@RequestBody Map<String, String> body) {
+	CompletableFuture<ResponseEntity<?>> createComplaint(@RequestBody Map<String, String> body) {
 
 		FileComplaintCommand complaint = new FileComplaintCommand(
-				body.get("id"), body.get("company"), body.get("description"));
+				UUID.randomUUID().toString(), body.get("company"), body.get("description"));
 
-		this.cg.send(complaint);
+		return this.cg.send(complaint).thenApply(complaintId -> {
+			UriComponents uriComponents = UriComponentsBuilder
+					.newInstance()
+					.path("/complaints/{id}")
+					.build()
+					.expand(Collections.singletonMap("id", complaint.getId()));
+			URI uri = uriComponents.toUri();
+			return ResponseEntity.created(uri).build();
+		});
 
-		UriComponents uriComponents = UriComponentsBuilder
-				.newInstance()
-				.path("/complaints/{id}")
-				.build()
-				.expand(Collections.singletonMap("id", complaint.getId()));
+	}
 
-		URI uri = uriComponents.toUri();
 
-		return ResponseEntity.created(uri).build();
+	@DeleteMapping("/{complaintId}")
+	void close(@PathVariable String complaintId) {
+		CloseComplaintCommand closeComplaintCommand = new CloseComplaintCommand(complaintId);
+		this.cg.send(closeComplaintCommand);
 	}
 
 	@PostMapping("/{complaintId}/comments")
@@ -51,13 +58,17 @@ class ComplaintsRestController {
 			@PathVariable String complaintId,
 			@RequestBody Map<String, Object> body) {
 
+		Long when = Long.class.cast(body.getOrDefault("when", new Date().getTime()));
+
 		AddCommentCommand command = new AddCommentCommand(
 				complaintId,
 				UUID.randomUUID().toString(),
 				String.class.cast(body.get("comment")),
 				String.class.cast(body.get("user")),
-				new Date(Long.class.cast(body.get("when"))));
+				new Date(when));
+
 		this.cg.send(command);
+
 		UriComponents uriComponents = UriComponentsBuilder
 				.newInstance()
 				.path("/complaints/{complaintId}/comments/{commentId}")

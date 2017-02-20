@@ -1,4 +1,4 @@
-package com.example;
+package complaints;
 
 import com.rabbitmq.client.Channel;
 import org.axonframework.amqp.eventhandling.DefaultAMQPMessageConverter;
