@@ -1,6 +1,7 @@
 package complaints;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import complaints.query.ComplaintQueryObjectRepository;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
@@ -10,10 +11,14 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -27,12 +32,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
-@SpringBootTest(classes = DemoApplication.class, webEnvironment = MOCK)
+@SpringBootTest(classes = {ComplaintsRestControllerTest.Config.class,
+		DemoApplication.class}, webEnvironment = MOCK)
 public class ComplaintsRestControllerTest {
 
 	private Log log = LogFactory.getLog(getClass());
 
 	private String complaintJson, commentJson;
+
+	@Autowired
+	private TransactionTemplate tt;
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -66,24 +75,68 @@ public class ComplaintsRestControllerTest {
 		newComplaint();
 	}
 
+	private String newComment(String complaint) throws Throwable {
+		MvcResult result = this.mockMvc
+				.perform(
+						post("/complaints/" + complaint + "/comments").contentType(
+								MediaType.APPLICATION_JSON).content(this.commentJson))
+				.andExpect(request().asyncStarted()).andReturn();
+		this.mockMvc.perform(asyncDispatch(result)).andExpect(status().isCreated());
+		return complaint;
+	}
+
+	@Autowired
+	private ComplaintQueryObjectRepository complaints;
+
+	@Configuration
+	public static class Config {
+
+		@Bean
+		public TransactionTemplate tt(PlatformTransactionManager tx) {
+			return new TransactionTemplate(tx);
+		}
+
+	}
+
+	@Test
+	public void createCommentAfterComplaintIsClosed() throws Throwable {
+		String complaint = newComplaint();
+		newComment(complaint);
+		closeComplaint(complaint);
+
+		int size;
+
+		size = this.tt.execute(status -> complaints.findOne(complaint).getComments()
+				.size());
+		Assert.assertEquals(size, 1);
+
+		this.mockMvc.perform(post("/complaints/" + complaint + "/comments").contentType(
+				MediaType.APPLICATION_JSON).content(this.commentJson))
+				.andExpect(status().isNotFound()); // it's not *actually* OK, but the processing threw an async exception.
+
+		size = this.tt.execute(status -> complaints.findOne(complaint).getComments()
+				.size());
+		Assert.assertEquals(size, 1);
+
+	}
+
+
+
 	@Test
 	public void createComment() throws Throwable {
-
-		MvcResult result = this.mockMvc
-				.perform(post("/complaints/" + newComplaint() + "/comments")
-						.contentType(MediaType.APPLICATION_JSON).content(this.commentJson))
-				.andExpect(request().asyncStarted()).andReturn();
-
-		this.mockMvc.perform(asyncDispatch(result)).andExpect(status().isCreated());
+		newComment(newComplaint());
 	}
 
 	@Test
 	public void closeComplaint() throws Throwable {
-		String complaintId = newComplaint();
+		closeComplaint(newComplaint());
+	}
 
+	private void closeComplaint(String complaintId) throws Throwable {
 		MvcResult result = this.mockMvc
-				.perform(delete("/complaints/" + complaintId)
-						.contentType(MediaType.APPLICATION_JSON).content(this.complaintJson))
+				.perform(
+						delete("/complaints/" + complaintId)
+								.contentType(MediaType.APPLICATION_JSON).content(this.complaintJson))
 				.andExpect(request().asyncStarted()).andReturn();
 
 		this.mockMvc.perform(asyncDispatch(result)).andExpect(status().isNotFound());
@@ -91,9 +144,9 @@ public class ComplaintsRestControllerTest {
 
 	private String newComplaint() throws Throwable {
 		MvcResult result = this.mockMvc
-				.perform(post("/complaints")
-						.contentType(MediaType.APPLICATION_JSON).content(this.complaintJson))
-				.andExpect(request().asyncStarted()).andReturn();
+				.perform(
+						post("/complaints").contentType(MediaType.APPLICATION_JSON).content(
+								this.complaintJson)).andExpect(request().asyncStarted()).andReturn();
 
 		AtomicReference<String> complaintId = new AtomicReference<>();
 
