@@ -32,131 +32,130 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
-@SpringBootTest(classes = {ComplaintsRestControllerTest.Config.class,
-		DemoApplication.class}, webEnvironment = MOCK)
+@SpringBootTest(classes = { ComplaintsRestControllerTest.Config.class,
+ DemoApplication.class }, webEnvironment = MOCK)
 public class ComplaintsRestControllerTest {
 
-	private Log log = LogFactory.getLog(getClass());
+ @Configuration
+ public static class Config {
 
-	private String complaintJson, commentJson;
+  @Bean
+  public TransactionTemplate tt(PlatformTransactionManager tx) {
+   return new TransactionTemplate(tx);
+  }
+ }
 
-	@Autowired
-	private TransactionTemplate tt;
+ private Log log = LogFactory.getLog(getClass());
 
-	@Autowired
-	private MockMvc mockMvc;
+ private String complaintJson, commentJson;
 
-	@Autowired
-	private ObjectMapper objectMapper;
+ @Autowired
+ private ComplaintQueryObjectRepository complaints;
 
-	@Before
-	public void setUp() throws Throwable {
+ @Autowired
+ private TransactionTemplate tt;
 
-		Map<String, Object> map;
+ @Autowired
+ private MockMvc mockMvc;
 
-		map = new HashMap<>();
-		map.put("description", "Why WebLogic, why?");
-		map.put("company", "Oracle");
-		this.complaintJson = this.objectMapper.writeValueAsString(map);
+ @Autowired
+ private ObjectMapper objectMapper;
 
-		map = new HashMap<>();
-		map.put("comment",
-				"we looked into this, and we can't delete WebLogic from the universe.");
-		map.put("user", "le");
-		map.put("when", new Date());
-		this.commentJson = this.objectMapper.writeValueAsString(map);
+ @Before
+ public void setUp() throws Throwable {
 
-		this.log.debug("comment JSON: " + this.commentJson);
-		this.log.debug("complaint JSON: " + this.complaintJson);
-	}
+  Map<String, Object> map;
 
-	@Test
-	public void createComplaint() throws Throwable {
-		newComplaint();
-	}
+  map = new HashMap<>();
+  map.put("description", "Why WebLogic, why?");
+  map.put("company", "Oracle");
+  this.complaintJson = this.objectMapper.writeValueAsString(map);
 
-	private String newComment(String complaint) throws Throwable {
-		MvcResult result = this.mockMvc
-				.perform(
-						post("/complaints/" + complaint + "/comments").contentType(
-								MediaType.APPLICATION_JSON).content(this.commentJson))
-				.andExpect(request().asyncStarted()).andReturn();
-		this.mockMvc.perform(asyncDispatch(result)).andExpect(status().isCreated());
-		return complaint;
-	}
+  map = new HashMap<>();
+  map.put("comment",
+   "we looked into this, and we can't delete WebLogic from the universe.");
+  map.put("user", "le");
+  map.put("when", new Date());
+  this.commentJson = this.objectMapper.writeValueAsString(map);
 
-	@Autowired
-	private ComplaintQueryObjectRepository complaints;
+  this.log.debug("comment JSON: " + this.commentJson);
+  this.log.debug("complaint JSON: " + this.complaintJson);
+ }
 
-	@Configuration
-	public static class Config {
+ @Test
+ public void createComplaint() throws Throwable {
+  newComplaint();
+ }
 
-		@Bean
-		public TransactionTemplate tt(PlatformTransactionManager tx) {
-			return new TransactionTemplate(tx);
-		}
+ @Test
+ public void createComment() throws Throwable {
+  newComment(newComplaint());
+ }
 
-	}
+ @Test
+ public void closeComplaint() throws Throwable {
+  closeComplaint(newComplaint());
+ }
 
-	@Test
-	public void createCommentAfterComplaintIsClosed() throws Throwable {
-		String complaint = newComplaint();
-		newComment(complaint);
-		closeComplaint(complaint);
+ @Test
+ public void createCommentAfterComplaintIsClosed() throws Throwable {
+  String complaint = newComplaint();
+  newComment(complaint);
+  closeComplaint(complaint);
 
-		int size;
+  int size;
 
-		size = this.tt.execute(status -> complaints.findOne(complaint).getComments()
-				.size());
-		Assert.assertEquals(size, 1);
+  size = this.tt.execute(status -> complaints.findOne(complaint).getComments()
+   .size());
+  Assert.assertEquals(size, 1);
 
-		this.mockMvc.perform(post("/complaints/" + complaint + "/comments").contentType(
-				MediaType.APPLICATION_JSON).content(this.commentJson))
-				.andExpect(status().isNotFound()); // it's not *actually* OK, but the processing threw an async exception.
+  this.mockMvc.perform(
+   post("/complaints/" + complaint + "/comments").contentType(
+    MediaType.APPLICATION_JSON).content(this.commentJson)).andExpect(
+   status().isNotFound());
 
-		size = this.tt.execute(status -> complaints.findOne(complaint).getComments()
-				.size());
-		Assert.assertEquals(size, 1);
+  size = this.tt.execute(status -> complaints.findOne(complaint).getComments()
+   .size());
+  Assert.assertEquals("there should _still_ only be "
+   + "one comment, as the complaint " + "is now closed!", size, 1);
 
-	}
+ }
 
+ private String newComment(String complaint) throws Throwable {
+  MvcResult result = this.mockMvc
+   .perform(
+    post("/complaints/" + complaint + "/comments").contentType(
+     MediaType.APPLICATION_JSON).content(this.commentJson))
+   .andExpect(request().asyncStarted()).andReturn();
+  this.mockMvc.perform(asyncDispatch(result)).andExpect(status().isCreated());
+  return complaint;
+ }
 
+ private void closeComplaint(String complaintId) throws Throwable {
+  MvcResult result = this.mockMvc
+   .perform(
+    delete("/complaints/" + complaintId)
+     .contentType(MediaType.APPLICATION_JSON).content(this.complaintJson))
+   .andExpect(request().asyncStarted()).andReturn();
 
-	@Test
-	public void createComment() throws Throwable {
-		newComment(newComplaint());
-	}
+  this.mockMvc.perform(asyncDispatch(result)).andExpect(status().isNotFound());
+ }
 
-	@Test
-	public void closeComplaint() throws Throwable {
-		closeComplaint(newComplaint());
-	}
+ private String newComplaint() throws Throwable {
+  MvcResult result = this.mockMvc
+   .perform(
+    post("/complaints").contentType(MediaType.APPLICATION_JSON).content(
+     this.complaintJson)).andExpect(request().asyncStarted()).andReturn();
 
-	private void closeComplaint(String complaintId) throws Throwable {
-		MvcResult result = this.mockMvc
-				.perform(
-						delete("/complaints/" + complaintId)
-								.contentType(MediaType.APPLICATION_JSON).content(this.complaintJson))
-				.andExpect(request().asyncStarted()).andReturn();
+  AtomicReference<String> complaintId = new AtomicReference<>();
 
-		this.mockMvc.perform(asyncDispatch(result)).andExpect(status().isNotFound());
-	}
+  this.mockMvc.perform(asyncDispatch(result)).andExpect(mvcResult -> {
+   String location = mvcResult.getResponse().getHeader("Location");
+   String complaintsPath = "/complaints/";
+   Assert.assertTrue(location.contains(complaintsPath));
+   complaintId.set(location.split(complaintsPath)[1]);
+  }).andExpect(status().isCreated());
 
-	private String newComplaint() throws Throwable {
-		MvcResult result = this.mockMvc
-				.perform(
-						post("/complaints").contentType(MediaType.APPLICATION_JSON).content(
-								this.complaintJson)).andExpect(request().asyncStarted()).andReturn();
-
-		AtomicReference<String> complaintId = new AtomicReference<>();
-
-		this.mockMvc.perform(asyncDispatch(result)).andExpect(mvcResult -> {
-			String location = mvcResult.getResponse().getHeader("Location");
-			String complaintsPath = "/complaints/";
-			Assert.assertTrue(location.contains(complaintsPath));
-			complaintId.set(location.split(complaintsPath)[1]);
-		}).andExpect(status().isCreated());
-
-		return complaintId.get();
-	}
+  return complaintId.get();
+ }
 }

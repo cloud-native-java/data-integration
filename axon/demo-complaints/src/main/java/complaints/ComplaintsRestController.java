@@ -50,7 +50,7 @@ class ComplaintsRestController {
  }
 
  @PostMapping("/{complaintId}/comments")
- @ResponseStatus (HttpStatus.NOT_FOUND)
+ @ResponseStatus(HttpStatus.NOT_FOUND)
  CompletableFuture<ResponseEntity<?>> createComment(
   @PathVariable String complaintId, @RequestBody Map<String, Object> body) {
 
