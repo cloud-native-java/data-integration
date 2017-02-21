@@ -13,7 +13,7 @@ import java.util.Date;
 public class AddCommentCommand {
 
  @TargetAggregateIdentifier
- private String complaintId;
+ private String complaintId; // <1>
 
  private String commentId, comment, user;
 

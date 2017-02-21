@@ -11,9 +11,8 @@ import org.axonframework.commandhandling.TargetAggregateIdentifier;
 public class FileComplaintCommand {
 
  @TargetAggregateIdentifier
- private String id;
+ private String id; // <1>
 
- private String company;
+ private String company, description; // <2>
 
- private String description;
 }
