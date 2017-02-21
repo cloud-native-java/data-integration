@@ -12,15 +12,24 @@ import java.util.Collections;
 @Component
 public class ComplaintEventProcessor {
 
+
  private final ComplaintQueryObjectRepository complaints;
 
  private final CommentQueryObjectRepository comments;
 
+ // <1>
  @Autowired
  ComplaintEventProcessor(ComplaintQueryObjectRepository complaints,
   CommentQueryObjectRepository comments) {
   this.complaints = complaints;
   this.comments = comments;
+ }
+
+ @EventHandler
+ public void on(ComplaintFiledEvent cfe) {
+  ComplaintQueryObject complaint = new ComplaintQueryObject(cfe.getId(),
+   cfe.getComplaint(), cfe.getCompany(), Collections.emptySet(), false);
+  this.complaints.save(complaint);
  }
 
  @EventHandler
@@ -38,12 +47,5 @@ public class ComplaintEventProcessor {
    .getComplaintId());
   complaintQueryObject.setClosed(true);
   this.complaints.save(complaintQueryObject);
- }
-
- @EventHandler
- public void on(ComplaintFiledEvent cfe) {
-  ComplaintQueryObject complaint = new ComplaintQueryObject(cfe.getId(),
-   cfe.getComplaint(), cfe.getCompany(), Collections.emptySet(), false);
-  this.complaints.save(complaint);
  }
 }
