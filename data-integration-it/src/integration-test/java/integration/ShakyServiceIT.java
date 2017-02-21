@@ -27,26 +27,32 @@ import java.util.stream.Stream;
 public class ShakyServiceIT {
 
  private final Log log = LogFactory.getLog(getClass());
+
  @Autowired
  private CloudFoundryService cloudFoundryService;
 
  private File shakyClient, shakyService;
+
  @Autowired
  private CloudFoundryService cfs;
+
  @Autowired
  private RestTemplate rt;
+
  @Autowired
  private CloudFoundryOperations cfo;
 
  private void installApplications() throws Throwable {
   File project = new File(".");
-  this.shakyClient = new File(project, "../shaky-service-to-service-calls/shaky-client/manifest.yml");
-  this.shakyService = new File(project, "../shaky-service-to-service-calls/shaky-service/manifest.yml");
+  this.shakyClient = new File(project,
+   "../shaky-service-to-service-calls/shaky-client/manifest.yml");
+  this.shakyService = new File(project,
+   "../shaky-service-to-service-calls/shaky-service/manifest.yml");
   Assert.assertTrue(this.shakyClient.exists());
   Assert.assertTrue(this.shakyService.exists());
 
-  this.cfs.pushApplicationAndCreateUserDefinedServiceUsingManifest(
-    this.shakyService);
+  this.cfs
+   .pushApplicationAndCreateUserDefinedServiceUsingManifest(this.shakyService);
   this.cfs.pushApplicationUsingManifest(this.shakyClient);
  }
 
@@ -57,38 +63,45 @@ public class ShakyServiceIT {
 
  @After
  public void after() throws Throwable {
-  Stream.of(this.shakyClient, this.shakyService).forEach(file ->
-    this.cfs.applicationManifestFrom(file).forEach((jar, manifest) -> {
-     this.cfs.destroyApplicationIfExists(manifest.getName());
-    }));
+  Stream.of(this.shakyClient, this.shakyService).forEach(
+   file -> this.cfs.applicationManifestFrom(file).forEach((jar, manifest) -> {
+    this.cfs.destroyApplicationIfExists(manifest.getName());
+   }));
 
-  this.cfs.applicationManifestFrom(this.shakyService).forEach((jar, manifest) -> {
-   this.cfs.destroyServiceIfExists(manifest.getName());
-  });
+  this.cfs.applicationManifestFrom(this.shakyService).forEach(
+   (jar, manifest) -> {
+    this.cfs.destroyServiceIfExists(manifest.getName());
+   });
   this.cfs.destroyOrphanedRoutes();
  }
 
  @Test
  public void deployServiceAndClient() throws Throwable {
 
-// the client has the recovery logic
+  // the client has the recovery logic
   String clientUrl = this.cloudFoundryService.urlForApplication("shaky-client");
   String param = "World";
   call(clientUrl, param, "Hello, " + param + "!");
 
-// client recovery logic trips when the service is down
-  this.cfo.applications().stop(StopApplicationRequest.builder().name("shaky-service").build()).block();
+  // client recovery logic trips when
+  // the service is down
+  this.cfo.applications()
+   .stop(StopApplicationRequest.builder().name("shaky-service").build())
+   .block();
   call(clientUrl, param, "OHAI");
  }
 
  private void call(String clientUrl, String param, String expected) {
-  Stream.of("hystrix", "retry").forEach(type -> {
-   String fullUrl = clientUrl + "/" + type + "/hi/" + param;
-   ResponseEntity<String> responseEntity =
-     this.rt.getForEntity(fullUrl, String.class);
-   log.info("called " + fullUrl + " and received " + responseEntity.getBody());
-   Assert.assertEquals(expected, responseEntity.getBody());
-  });
+  Stream
+   .of("hystrix", "retry")
+   .forEach(
+    type -> {
+     String fullUrl = clientUrl + "/" + type + "/hi/" + param;
+     ResponseEntity<String> responseEntity = this.rt.getForEntity(fullUrl,
+      String.class);
+     log.info("called " + fullUrl + " and received " + responseEntity.getBody());
+     Assert.assertEquals(expected, responseEntity.getBody());
+    });
  }
 
  @SpringBootApplication
@@ -96,8 +109,7 @@ public class ShakyServiceIT {
 
   @Bean
   RestTemplate restTemplate() {
-   return new RestTemplateBuilder()
-     .build();
+   return new RestTemplateBuilder().build();
   }
  }
 

@@ -17,7 +17,7 @@ public class ComplaintsStatsApplication {
  }
 
  @Bean
- SpringAMQPMessageSource statistics (Serializer serializer) {
+ SpringAMQPMessageSource statistics(Serializer serializer) {
   return new SpringAMQPMessageSource(serializer) {
 
    @Override

@@ -41,37 +41,36 @@ class ComplaintsRestController {
    });
  }
 
-	// <2>
-	@PostMapping("/{complaintId}/comments")
-	@ResponseStatus(HttpStatus.NOT_FOUND)
-	CompletableFuture<ResponseEntity<?>> addComment(
-			@PathVariable String complaintId, @RequestBody Map<String, Object> body) {
+ // <2>
+ @PostMapping("/{complaintId}/comments")
+ @ResponseStatus(HttpStatus.NOT_FOUND)
+ CompletableFuture<ResponseEntity<?>> addComment(
+  @PathVariable String complaintId, @RequestBody Map<String, Object> body) {
 
-		Long when = Long.class.cast(body.getOrDefault("when", System.currentTimeMillis()));
+  Long when = Long.class.cast(body.getOrDefault("when",
+   System.currentTimeMillis()));
 
-		AddCommentCommand command = new AddCommentCommand(complaintId, UUID
-				.randomUUID().toString(), String.class.cast(body.get("comment")),
-				String.class.cast(body.get("user")), new Date(when));
+  AddCommentCommand command = new AddCommentCommand(complaintId, UUID
+   .randomUUID().toString(), String.class.cast(body.get("comment")),
+   String.class.cast(body.get("user")), new Date(when));
 
-		return this.cg.send(command).thenApply(commentId -> {
+  return this.cg.send(command).thenApply(commentId -> {
 
-			Map<String, String> parms = new HashMap<>();
-			parms.put("complaintId", complaintId);
-			parms.put("commentId", command.getCommentId());
+   Map<String, String> parms = new HashMap<>();
+   parms.put("complaintId", complaintId);
+   parms.put("commentId", command.getCommentId());
 
-			URI uri = uri("/complaints/{complaintId}/comments/{commentId}", parms);
+   URI uri = uri("/complaints/{complaintId}/comments/{commentId}", parms);
 
-			return ResponseEntity.created(uri).build();
-		});
-	}
+   return ResponseEntity.created(uri).build();
+  });
+ }
 
  @DeleteMapping("/{complaintId}")
  CompletableFuture<ResponseEntity<?>> closeComplaint(
   @PathVariable String complaintId) {
-  CloseComplaintCommand csc = new CloseComplaintCommand(
-   complaintId);
-  return this.cg.send(csc).thenApply(
-   none -> ResponseEntity.notFound().build());
+  CloseComplaintCommand csc = new CloseComplaintCommand(complaintId);
+  return this.cg.send(csc).thenApply(none -> ResponseEntity.notFound().build());
  }
 
  private static URI uri(String uri, Map<String, String> template) {
