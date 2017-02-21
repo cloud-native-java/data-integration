@@ -1,7 +1,6 @@
 package complaints;
 
 import com.rabbitmq.client.Channel;
-import org.axonframework.amqp.eventhandling.DefaultAMQPMessageConverter;
 import org.axonframework.amqp.eventhandling.spring.SpringAMQPMessageSource;
 import org.axonframework.serialization.Serializer;
 import org.springframework.amqp.core.Message;
@@ -18,12 +17,11 @@ public class ComplaintsStatsApplication {
  }
 
  @Bean
- SpringAMQPMessageSource statisticsQueue(Serializer serializer) {
-  return new SpringAMQPMessageSource(
-   new DefaultAMQPMessageConverter(serializer)) {
+ SpringAMQPMessageSource statistics (Serializer serializer) {
+  return new SpringAMQPMessageSource(serializer) {
 
-   @RabbitListener(queues = "complaints")
    @Override
+   @RabbitListener(queues = "complaints")
    public void onMessage(Message message, Channel channel) throws Exception {
     super.onMessage(message, channel);
    }
