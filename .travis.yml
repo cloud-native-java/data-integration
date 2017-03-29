@@ -11,3 +11,6 @@ cache:
 
 script:
   -  mvn -e verify deploy
+
+services:
+  - rabbitmq
