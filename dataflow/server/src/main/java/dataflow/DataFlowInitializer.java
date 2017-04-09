@@ -36,6 +36,7 @@ class DataFlowInitializer {
     new URL(baseUri.toURL(), "app.properties").toString()).parallel()
    .forEach(u -> df.appRegistryOperations().importFromResource(u, true));
 
+  // <3>
   TaskOperations taskOperations = df.taskOperations();
   Stream.of("batch-task", "simple-task").forEach(tn -> {
    String name = "my-" + tn;
@@ -46,7 +47,7 @@ class DataFlowInitializer {
    taskOperations.launch(name, properties, arguments); // <4>
   });
 
-  // <3>
+  // <4>
   Map<String, String> streams = new HashMap<>();
   streams.put("bracket-time", "time | brackets | log");
   streams
