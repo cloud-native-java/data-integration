@@ -10,23 +10,26 @@ class AmqpConfiguration {
 
  private static final String COMPLAINTS = "complaints";
 
- //<1>
+ // <1>
  @Bean
  Exchange exchange() {
   return ExchangeBuilder.fanoutExchange(COMPLAINTS).build();
  }
+
  // <2>
  @Bean
  Queue queue() {
   return QueueBuilder.durable(COMPLAINTS).build();
  }
- //<3>
+
+ // <3>
  @Bean
  Binding binding() {
   return BindingBuilder.bind(queue()) //
    .to(exchange()).with("*").noargs();
  }
- //<4>
+
+ // <4>
  @Autowired
  public void configure(AmqpAdmin admin) {
   admin.declareExchange(exchange());

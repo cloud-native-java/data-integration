@@ -12,7 +12,6 @@ import java.util.Collections;
 @Component
 public class ComplaintEventProcessor {
 
-
  private final ComplaintQueryObjectRepository complaints;
 
  private final CommentQueryObjectRepository comments;

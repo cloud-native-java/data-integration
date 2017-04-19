@@ -9,8 +9,10 @@ import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.messaging.Message;
 
-@MessageEndpoint // <1>
-@EnableBinding(Processor.class) // <2>
+@MessageEndpoint
+// <1>
+@EnableBinding(Processor.class)
+// <2>
 @SpringBootApplication
 public class ProcessorStreamExample {
 
