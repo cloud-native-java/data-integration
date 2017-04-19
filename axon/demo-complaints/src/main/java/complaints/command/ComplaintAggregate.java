@@ -46,7 +46,7 @@ public class ComplaintAggregate {
   Assert.hasLength(c.getComplaintId());
   Assert.hasLength(c.getUser());
   Assert.notNull(c.getWhen());
-  Assert.isTrue(!this.closed);
+  Assert.isT rue(!this.closed);
   apply(new CommentAddedEvent(c.getComplaintId(), c.getCommentId(),
    c.getComment(), c.getUser(), c.getWhen()));
  }
