@@ -17,7 +17,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.dataflow.rest.client.DataFlowTemplate;
 import org.springframework.cloud.dataflow.rest.client.TaskOperations;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
@@ -64,7 +63,7 @@ public class DataFlowIT {
   });
 
   Arrays.asList(deployStreams(df), deployTasks(df)).parallelStream()
-   .map(r -> r).forEach(Runnable::run);
+   .forEach(Runnable::run);
   log.info("deployed tasks and streams.");
  }
 
@@ -125,6 +124,7 @@ public class DataFlowIT {
    System.getenv("CF_USER"));
   env.put("SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_PASSWORD",
    System.getenv("CF_PASSWORD"));
+  env.put("SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_API_TIMEOUT", "120");
 
   env.put("SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES", serverRabbit);
   env.put("SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_SERVICES", serverMysql);
@@ -150,16 +150,15 @@ public class DataFlowIT {
 
   env.put("SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_INSTANCES", "1");
 
-  env.entrySet().forEach(
-   e -> {
-    this.cloudFoundryOperations
-     .applications()
-     .setEnvironmentVariable(
-      SetEnvironmentVariableApplicationRequest.builder().name(appName)
-       .variableName(e.getKey()).variableValue(e.getValue()).build()).block();
+  env.forEach((k, v) -> {
+   this.cloudFoundryOperations
+    .applications()
+    .setEnvironmentVariable(
+     SetEnvironmentVariableApplicationRequest.builder().name(appName)
+      .variableName(k).variableValue(v).build()).block();
 
-    log.info("set environment variable for " + appName + ": " + e.getKey());
-   });
+   log.info("set environment variable for " + appName + ": " + k);
+  });
 
   log.info("set all " + env.size() + " environment variables.");
 
@@ -260,7 +259,10 @@ public class DataFlowIT {
  }
 
  private String serverJarUrl() {
-  String serverJarVersion = "1.1.0.BUILD-SNAPSHOT";
+  // todo have this written in by the Maven compilation process..
+  String serverJarVersion = "1.2.0.M2";
+  // String serverJarVersion =
+  // "1.1.0.BUILD-SNAPSHOT";
   String serverJarUrl = "http://repo.spring.io/${server_jar_url_prefix}/org/springframework/cloud/"
    + "spring-cloud-dataflow-server-cloudfoundry/${server_jar_version}"
    + "/spring-cloud-dataflow-server-cloudfoundry-${server_jar_version}.jar";
