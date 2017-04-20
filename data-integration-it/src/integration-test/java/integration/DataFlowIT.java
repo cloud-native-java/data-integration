@@ -263,9 +263,13 @@ public class DataFlowIT {
   String serverJarVersion = "1.2.0.M2";
   // String serverJarVersion =
   // "1.1.0.BUILD-SNAPSHOT";
-  String serverJarUrl = "http://repo.spring.io/${server_jar_url_prefix}/org/springframework/cloud/"
-   + "spring-cloud-dataflow-server-cloudfoundry/${server_jar_version}"
-   + "/spring-cloud-dataflow-server-cloudfoundry-${server_jar_version}.jar";
+
+//  String serverJarUrl = "http://repo.spring.io/${server_jar_url_prefix}/org/springframework/cloud/"
+//   + "spring-cloud-dataflow-server-cloudfoundry/${server_jar_version}"
+//   + "/spring-cloud-dataflow-server-cloudfoundry-${server_jar_version}.jar";
+//
+  String serverJarUrl = "http://repo.spring.io/milestones/org/springframework/cloud/spring-cloud-dataflow-server-cloudfoundry/1.2.0.M2/spring-cloud-dataflow-server-cloudfoundry-1.2.0.M2.jar";
+
   String prefix = serverJarVersion.toUpperCase().contains("RELEASE") ? "release"
    : "snapshot";
   return serverJarUrl.replace("${server_jar_url_prefix}", prefix).replace(
