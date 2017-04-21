@@ -12,11 +12,6 @@
         <version>1.0.0-SNAPSHOT</version>
         <relativePath/>
     </parent>
-    <properties>
-        <!-- todo: put this in the root parent build if it works !
-        -->
-        <spring-cloud-dataflow.version>1.2.0.M3</spring-cloud-dataflow.version>
-    </properties>
     <modules>
         <module>dataflow</module>
         <module>shaky-service-to-service-calls</module>
