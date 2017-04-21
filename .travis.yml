@@ -5,9 +5,9 @@ sudo: required
 jdk:
   - oraclejdk8
 
-cache:
-  directories:
-    - $HOME/.m2/repository/
+#cache:
+#  directories:
+#    - $HOME/.m2/repository/
 
 # Im not sure if this line works
 # our ITs require access to the libraries in the
