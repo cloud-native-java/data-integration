@@ -13,7 +13,8 @@ import java.util.concurrent.atomic.AtomicLong;
 @RestController
 class StatisticsRestController {
 
- private final ConcurrentMap<String, AtomicLong> statistics = new ConcurrentHashMap<>();
+ private final ConcurrentMap<String, AtomicLong> statistics =
+  new ConcurrentHashMap<>();
 
  @EventHandler
  public void on(ComplaintFiledEvent event) {

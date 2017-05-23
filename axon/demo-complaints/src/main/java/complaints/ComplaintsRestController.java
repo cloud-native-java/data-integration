@@ -14,7 +14,9 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 @RestController
-@RequestMapping(value = "/complaints", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/complaints",
+  consumes = MediaType.APPLICATION_JSON_VALUE,
+  produces = MediaType.APPLICATION_JSON_VALUE)
 class ComplaintsRestController {
 
  private final CommandGateway cg;

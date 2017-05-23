@@ -32,7 +32,8 @@ public class RetryableGreetingClient implements GreetingClient {
  }
 
  // <1>
- @Retryable(include = Exception.class, maxAttempts = 4, backoff = @Backoff(multiplier = 5))
+ @Retryable(include = Exception.class, maxAttempts = 4,
+    backoff = @Backoff(multiplier = 5))
  @Override
  public String greet(String name) {
   long time = System.currentTimeMillis();
@@ -42,8 +43,9 @@ public class RetryableGreetingClient implements GreetingClient {
   this.log.info("attempting to call the greeting-service " + time + "/"
    + now.toString());
 
-  ParameterizedTypeReference<Map<String, String>> ptr = new ParameterizedTypeReference<Map<String, String>>() {
-  };
+  ParameterizedTypeReference<Map<String, String>> ptr =
+   new ParameterizedTypeReference<Map<String, String>>() {
+   };
 
   return this.restTemplate
    .exchange(this.serviceUri + "/hi/" + name, HttpMethod.GET, null, ptr, name)

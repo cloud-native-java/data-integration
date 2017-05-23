@@ -37,8 +37,9 @@ public class CircuitBreakerGreetingClient implements GreetingClient {
   this.log.info("attempting to call " + "the greeting-service " + time + "/"
    + now.toString());
 
-  ParameterizedTypeReference<Map<String, String>> ptr = new ParameterizedTypeReference<Map<String, String>>() {
-  };
+  ParameterizedTypeReference<Map<String, String>> ptr =
+   new ParameterizedTypeReference<Map<String, String>>() {
+   };
 
   return this.restTemplate
    .exchange(this.serviceUri + "/hi/" + name, HttpMethod.GET, null, ptr, name)
