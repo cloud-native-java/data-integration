@@ -40,11 +40,11 @@ class DataFlowInitializer {
   TaskOperations taskOperations = df.taskOperations();
   Stream.of("batch-task", "simple-task").forEach(tn -> {
    String name = "my-" + tn;
-   taskOperations.create(name, tn); // <3>
+   taskOperations.create(name, tn);
    Map<String, String> properties = Collections.singletonMap(
     "simple-batch-task.input", System.getenv("HOME") + "Desktop/in.csv");
    List<String> arguments = Arrays.asList("input=in", "output=out");
-   taskOperations.launch(name, properties, arguments); // <4>
+   taskOperations.launch(name, properties, arguments);
   });
 
   // <4>

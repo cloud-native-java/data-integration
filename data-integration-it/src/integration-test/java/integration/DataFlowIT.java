@@ -259,15 +259,8 @@ public class DataFlowIT {
  }
 
  private String serverJarUrl() {
-  // todo have this written in by the Maven compilation process..
+  // TODO have this written in by the Maven compilation process..
   String serverJarVersion = "1.2.0.M2";
-  // String serverJarVersion =
-  // "1.1.0.BUILD-SNAPSHOT";
-
-//  String serverJarUrl = "http://repo.spring.io/${server_jar_url_prefix}/org/springframework/cloud/"
-//   + "spring-cloud-dataflow-server-cloudfoundry/${server_jar_version}"
-//   + "/spring-cloud-dataflow-server-cloudfoundry-${server_jar_version}.jar";
-//
   String serverJarUrl = "http://repo.spring.io/milestone/org/springframework/cloud/spring-cloud-dataflow-server-cloudfoundry/1.2.0.M2/spring-cloud-dataflow-server-cloudfoundry-1.2.0.M2.jar";
 
   String prefix = serverJarVersion.toUpperCase().contains("RELEASE") ? "release"

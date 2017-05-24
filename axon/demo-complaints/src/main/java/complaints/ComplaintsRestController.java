@@ -13,11 +13,15 @@ import java.net.URI;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
+//@formatter:off
 @RestController
 @RequestMapping(value = "/complaints",
-  consumes = MediaType.APPLICATION_JSON_VALUE,
-  produces = MediaType.APPLICATION_JSON_VALUE)
+  consumes = APPLICATION_JSON_VALUE,
+  produces = APPLICATION_JSON_VALUE)
 class ComplaintsRestController {
+//@formatter:on
 
  private final CommandGateway cg;
 

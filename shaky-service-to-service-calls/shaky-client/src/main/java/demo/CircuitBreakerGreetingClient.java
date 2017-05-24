@@ -29,7 +29,7 @@ public class CircuitBreakerGreetingClient implements GreetingClient {
   this.serviceUri = uri;
  }
 
- @Override
+ //<1>
  @HystrixCommand(fallbackMethod = "fallback")
  public String greet(String name) {
   long time = System.currentTimeMillis();
@@ -37,10 +37,11 @@ public class CircuitBreakerGreetingClient implements GreetingClient {
   this.log.info("attempting to call " + "the greeting-service " + time + "/"
    + now.toString());
 
+  //@formatter:off
   ParameterizedTypeReference<Map<String, String>> ptr =
    new ParameterizedTypeReference<Map<String, String>>() {
    };
-
+  //@formatter:on
   return this.restTemplate
    .exchange(this.serviceUri + "/hi/" + name, HttpMethod.GET, null, ptr, name)
    .getBody().get("greeting");

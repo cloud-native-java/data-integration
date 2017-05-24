@@ -16,6 +16,7 @@ public class ComplaintsStatsApplication {
   SpringApplication.run(ComplaintsStatsApplication.class, args);
  }
 
+ //<1>
  @Bean
  SpringAMQPMessageSource statistics(Serializer serializer) {
   return new SpringAMQPMessageSource(serializer) {
