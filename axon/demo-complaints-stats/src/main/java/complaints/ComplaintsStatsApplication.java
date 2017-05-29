@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 public class ComplaintsStatsApplication {
 
- 
+
  public static void main(String[] args) {
   SpringApplication.run(ComplaintsStatsApplication.class, args);
  }
