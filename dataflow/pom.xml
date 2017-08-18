@@ -16,7 +16,7 @@
     <modules>
         <module>server</module>
         <module>server-definitions</module>
-        <module>shell</module>
+        <!-- <module>shell</module> -->
         <module>stream-example</module>
         <module>task-example</module>
     </modules>
